@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #numeros {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #numeros div {
+            border: 1px solid black;
+            padding: 10px;
+            margin: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="numeros">
+    </div>
+    <button id="btNumero">sacar numero</button>
+    <button id="newGame">nuevo juego</button>
+    <h1 id="numero"></h1>
+</body>
+
+<script>
+    let divNumeros = document.getElementById("numeros");
+    let h1Numero = document.getElementById('numero');
+    let min = 1;
+    let max = 75;
+    document.getElementById("btNumero").addEventListener("click", () => {
+        let numeros = [];
+        if (localStorage.getItem("numeros")) {
+            numeros = JSON.parse(localStorage.getItem("numeros"));
+        }
+
+        let numero;
+        do {
+            numero = Math.floor(Math.random() * (max - min + 1)) + min;
+        } while (binarySearch(numeros, numero) != -1);
+
+        h1Numero.textContent = numero;
+
+        strNumbers = JSON.stringify(numeros);
+        localStorage.setItem("numeros", strNumbers);
+
+        fetch("/sacarNumero?12345678910", {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: strNumbers
+        })
+    })
+
+    function binarySearch(arr, target) {
+        let startIndex = 0;
+        let endIndex = arr.length - 1;
+        let middleIndex
+        while (startIndex <= endIndex) {
+            middleIndex = Math.floor((startIndex + endIndex) / 2);
+            const middleValue = arr[middleIndex];
+
+            if (middleValue === target) {
+                return middleIndex; // Elemento encontrado
+            } else if (middleValue < target) {
+                startIndex = middleIndex + 1; // Buscar en la mitad derecha
+            } else {
+                endIndex = middleIndex - 1; // Buscar en la mitad izquierda
+            }
+        }
+
+        while (target > arr[middleIndex]) {
+            middleIndex++;
+        }
+
+        let newDivNum = document.createElement("div");
+        newDivNum.textContent = target;
+        let elementoDesplazar = divNumeros.children[middleIndex];
+        if (elementoDesplazar) {
+            divNumeros.insertBefore(newDivNum, elementoDesplazar);
+        } else {
+            divNumeros.appendChild(newDivNum);
+        }
+        arr.splice(middleIndex, 0, target);
+        return -1;
+    }
+
+    document.getElementById("newGame").addEventListener("click", () => {
+        if (localStorage.getItem("numeros")) {
+            localStorage.clear()
+        }
+        divNumeros.innerHTML = "";
+        h1Numero.textContent = "";
+        fetch("/clear?12345678910");
+    })
+</script>
+
+</html>

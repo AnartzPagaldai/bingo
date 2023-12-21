@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .bingo-card {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .bingo-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .bingo-cell {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000000;
+            margin: 5px;
+            font-size: 24px;
+            line-height: 50px;
+            font-weight: bold;
+        }
+
+        .bingo-numbers {
+            padding: 2em;
+        }
+
+        .bingo-cell {
+            padding: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bingo-card" id="bingo-card">
+        <p>BINGO</p>
+        <!-- Genera la zona de números de 4x4 aquí -->
+        <div class="bingo-numbers">
+            <!-- Repite las filas de números aquí -->
+        </div>
+    </div>
+
+    <script>
+        let cellMark = 0;
+        // Función para generar números aleatorios no repetidos en un rango específico
+        function generateUniqueRandomNumbers(min, max, count) {
+            const numbers = new Set();
+            while (numbers.size < count) {
+                const number = Math.floor(Math.random() * (max - min + 1)) + min;
+                numbers.add(number);
+            }
+            arrayNum = Array.from(numbers);
+            return arrayNum.sort();
+        }
+
+        // Función para crear una fila de números aleatorios no repetidos
+        function createUniqueRandomNumbersRow(min, max, count) {
+            const row = document.createElement('div');
+            row.classList.add('bingo-row');
+            const numbers = generateUniqueRandomNumbers(min, max, count);
+            for (const number of numbers) {
+                const cell = document.createElement('div');
+                cell.classList.add('bingo-cell');
+                cell.textContent = number;
+                cell.addEventListener('click', () => {
+                    cellMark++;
+                    console.log(cellMark)
+                    if (cellMark == 16) {
+                        console.log("alskdfja")
+                    }
+                    cell.style.backgroundColor = 'darkgray'; // Cambia el fondo a gris oscuro al hacer clic
+                });
+                row.appendChild(cell);
+            }
+            return row;
+        }
+
+        const bingoNumbers = document.querySelector('.bingo-numbers');
+
+        for (let i = 0; i < 4; i++) {
+            const row = createUniqueRandomNumbersRow(1, 75, 4); // Cambiamos el número de números por fila a 4
+            bingoNumbers.appendChild(row);
+        }
+    </script>
+</body>
+
+</html>
