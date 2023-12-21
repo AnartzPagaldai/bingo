@@ -78,10 +78,11 @@
             numeros = JSON.parse(localStorage.getItem("numeros"));
         }
 
+        let cont = 0;
         let numero;
         do {
             numero = Math.floor(Math.random() * (max - min + 1)) + min;
-        } while (binarySearch(numeros, numero) != -1);
+        } while (binarySearch(numeros, numero) != -1 && numeros.length < 75);
 
         h1Numero.textContent = numero;
 

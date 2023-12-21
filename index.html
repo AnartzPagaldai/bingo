@@ -60,33 +60,32 @@
 
     <script>
         let cellMark = 0;
-        // Función para generar números aleatorios no repetidos en un rango específico
-        function generateUniqueRandomNumbers(min, max, count) {
-            const numbers = new Set();
-            while (numbers.size < count) {
-                const number = Math.floor(Math.random() * (max - min + 1)) + min;
-                numbers.add(number);
-            }
-            arrayNum = Array.from(numbers);
-            return arrayNum.sort();
-        }
 
         // Función para crear una fila de números aleatorios no repetidos
-        function createUniqueRandomNumbersRow(min, max, count) {
+        function createUniqueRandomNumbersRow(numbers) {
             const row = document.createElement('div');
             row.classList.add('bingo-row');
-            const numbers = generateUniqueRandomNumbers(min, max, count);
             for (const number of numbers) {
                 const cell = document.createElement('div');
                 cell.classList.add('bingo-cell');
                 cell.textContent = number;
                 cell.addEventListener('click', () => {
-                    cellMark++;
-                    console.log(cellMark)
-                    if (cellMark == 16) {
-                        console.log("alskdfja")
+                    if (cell.getAttribute("mark") == "true") {
+                        cellMark--;
+                        cell.setAttribute("mark", "false");
+                        cell.style.backgroundColor = 'white'; // Cambia el fondo a gris oscuro al hacer clic
+                    } else {
+                        cellMark++;
+                        cell.setAttribute("mark", "true");
+                        cell.style.backgroundColor = 'darkgray'; // Cambia el fondo a gris oscuro al hacer clic
                     }
-                    cell.style.backgroundColor = 'darkgray'; // Cambia el fondo a gris oscuro al hacer clic
+                    if (cellMark == 16) {
+                        fetch("/comprobar")
+                            .then(res => res.text())
+                            .then(text => {
+                                alert(text);
+                            })
+                    }
                 });
                 row.appendChild(cell);
             }
@@ -95,10 +94,23 @@
 
         const bingoNumbers = document.querySelector('.bingo-numbers');
 
-        for (let i = 0; i < 4; i++) {
-            const row = createUniqueRandomNumbersRow(1, 75, 4); // Cambiamos el número de números por fila a 4
-            bingoNumbers.appendChild(row);
-        }
+        fetch("/getNumbers")
+            .then(res => res.json())
+            .then(nums => {
+                let numbers = []
+                let cont = 0;
+                for (let i = 0; i < 4; i++) {
+                    numbers[i] = []
+                    for (let e = 0; e < 4; e++) {
+                        numbers[i][e] = nums[cont]
+                        cont++;
+                    }
+                }
+                for (let i = 0; i < 4; i++) {
+                    const row = createUniqueRandomNumbersRow(numbers[i]); // Cambiamos el número de números por fila a 4
+                    bingoNumbers.appendChild(row);
+                }
+            })
     </script>
 </body>
 
