@@ -4,6 +4,7 @@ const fs = require('fs');
 let numeros = [];
 let jugadores = new Map();
 let sal = Math.random() * 1000;
+let bingo = false;
 
 const server = http.createServer((req, res) => {
     uri = req.url.split("?")
@@ -39,7 +40,7 @@ const server = http.createServer((req, res) => {
                     numeros = [];
                     jugadores.clear();
                     sal = Math.random() * 1000;
-                    console.log(sal)
+                    bingo = false;
                     res.end("ok");
                 } else {
                     res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -62,6 +63,9 @@ const server = http.createServer((req, res) => {
                     res.end('404 not found');
                 }             
                 break;
+            case "/comprobarAdmin":
+                res.end(bingo ? "bingo" : "no es bingo");
+                break;
             case "/comprobar":
                 cookie = getCookie("jugador", req);
                 if (cookie) {
@@ -74,6 +78,7 @@ const server = http.createServer((req, res) => {
                     }
 
                     if (cont == 16) {
+                        bingo = true;
                         res.end("bingo")
                     } else {
                         res.end("no es bingo");
@@ -96,7 +101,6 @@ const server = http.createServer((req, res) => {
 
                 req.on('end', () => {
                     numeros = JSON.parse(data);
-                    console.log(numeros)
                     res.end("ok");
                 });
             } else {
