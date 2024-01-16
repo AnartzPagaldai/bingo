@@ -65,7 +65,7 @@ function sendFile(res, fileName, type) {
 }
 
 const puerto = 80;
-const direccion = '172.20.224.107';
+const direccion = '0.0.0.0'//'172.20.224.107';
 server.listen(puerto, direccion, () => {
     console.log(`Servidor en http://${direccion}:${puerto}/`);
 });
